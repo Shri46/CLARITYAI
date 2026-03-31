@@ -76,3 +76,14 @@ export const getMockData = () => {
     ]
   };
 };
+
+export const getInsights = async () => {
+  // Mock function to prevent frontend build failure
+  return {
+    insights: [
+      "Your largest expense category is Food & Dining.",
+      "You have an upcoming subscription renewal soon.",
+      "Consider cutting back on Shopping this week to stay on budget."
+    ]
+  };
+};

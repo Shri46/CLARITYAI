@@ -24,7 +24,8 @@ const generateToken = (id) => {
 dotenv.config();
 
 connectDB();
-
+const { initTelegramBot } = require('./telegramBot');
+initTelegramBot();
 const app = express();
 app.use(cors());
 app.use(express.json());

@@ -39,12 +39,14 @@ function App() {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (authUser) loadData();
+    else setAnalysisData(null);
+  }, [authUser]);
 
   const handleLogout = () => {
     localStorage.removeItem('userInfo');
     setAuthUser(null);
+    setAnalysisData(null);
   };
 
   return (
