@@ -26,7 +26,7 @@ async function categorizeWithGemini(transactions) {
      return transactions.map(t => ({ index: t.index, category: 'Other', confidence: 0, source: 'error' }));
   }
 
-  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `
 You are a financial transaction categorizer. Categorize the following transactions exactly into one of these categories:

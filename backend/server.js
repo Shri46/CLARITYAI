@@ -27,7 +27,13 @@ connectDB();
 const { initTelegramBot } = require('./telegramBot');
 initTelegramBot();
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    process.env.FRONTEND_URL,
+  ].filter(Boolean),
+  credentials: true,
+}));
 app.use(express.json());
 
 const upload = multer({ storage: multer.memoryStorage() });
