@@ -28,11 +28,17 @@ const { initTelegramBot } = require('./telegramBot');
 initTelegramBot();
 const app = express();
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    process.env.FRONTEND_URL,
-  ].filter(Boolean),
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (
+      origin.startsWith('http://localhost') ||
+      origin.endsWith('.vercel.app') ||
+      (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL)
+    ) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
 }));
 app.use(express.json());
