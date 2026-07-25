@@ -5,6 +5,7 @@ import TransactionsTable from './TransactionsTable';
 import BudgetsManager from './BudgetsManager';
 import SubscriptionsTracker from './SubscriptionsTracker';
 import InsightsCard from './InsightsCard';
+import TelegramConnect from './TelegramConnect';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
@@ -92,6 +93,8 @@ const Dashboard = ({ data, refreshData }) => {
            <span className="text-indigo-400 font-bold text-lg">{data.stats?.rules_percentage}%</span> <span className="text-slate-400 text-sm">Rule Categorized</span>
         </div>
       </div>
+
+      <TelegramConnect />
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

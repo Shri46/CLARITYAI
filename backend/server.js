@@ -30,6 +30,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:5173',
+    'http://localhost:5174',
     process.env.FRONTEND_URL,
   ].filter(Boolean),
   credentials: true,
@@ -73,6 +74,22 @@ app.post('/api/login', async (req, res) => {
     } else {
       res.status(401).json({ error: 'Invalid credentials' });
     }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/user/status', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      telegramLinked: !!user.telegramChatId,
+      botUsername: process.env.TELEGRAM_BOT_USERNAME || 'ClarityAIBot'
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

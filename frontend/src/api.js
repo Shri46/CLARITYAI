@@ -23,6 +23,11 @@ export const registerUser = async (data) => {
   return response.data;
 };
 
+export const getUserStatus = async () => {
+  const response = await api.get('/user/status');
+  return response.data;
+};
+
 export const uploadStatement = async (file) => {
   const formData = new FormData();
   formData.append('statement', file);

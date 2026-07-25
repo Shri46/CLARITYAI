@@ -23,7 +23,29 @@ const initTelegramBot = () => {
     if (!text) return;
 
     if (text.startsWith('/start')) {
-       bot.sendMessage(chatId, "Welcome to ClarityAI Bot! Send me an expense like 'spent 500 on Starbucks' and I will automatically categorize and add it to your dashboard. Type /logout to unlink your account.");
+       const parts = text.split(' ');
+       if (parts.length > 1 && parts[1].trim()) {
+         const payload = parts[1].trim();
+         try {
+           let targetUser = null;
+           if (payload.includes('@')) {
+             targetUser = await User.findOne({ email: payload.toLowerCase() });
+           } else if (payload.match(/^[0-9a-fA-F]{24}$/)) {
+             targetUser = await User.findById(payload);
+           }
+           
+           if (targetUser) {
+             targetUser.telegramChatId = String(chatId);
+             await targetUser.save();
+             bot.sendMessage(chatId, `🎉 Welcome ${targetUser.name}! Your Telegram account has been linked to ${targetUser.email}.\n\nYou can now send me expenses directly here (e.g. "spent 500 on Swiggy"), and it will sync to your ClarityAI dashboard automatically!`);
+             return;
+           }
+         } catch(e) {
+           console.error("Deep link error:", e);
+         }
+       }
+
+       bot.sendMessage(chatId, "Welcome to ClarityAI Bot! Send me an expense like 'spent 500 on Starbucks' and I will automatically categorize and add it to your dashboard.\n\nIf your account is not linked, reply with your ClarityAI email address to link it!");
        return;
     }
 
