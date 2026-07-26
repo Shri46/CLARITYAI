@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard';
 import ManualEntry from './components/ManualEntry';
 import Login from './components/Login';
 import Register from './components/Register';
+import ClarityAILogo from './components/ClarityAILogo';
 import { getTransactions } from './api';
 
 function App() {
@@ -51,32 +52,33 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-slate-950 flex flex-col font-sans selection:bg-teal-500/30">
-        <header className="bg-slate-900/50 backdrop-blur-xl border-b border-slate-800/50 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-teal-500/20">
+        <header className="bg-white/80 backdrop-blur-xl border-b border-slate-200/80 sticky top-0 z-50 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-to-tr from-teal-500 to-indigo-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-teal-500/20 group-hover:shadow-indigo-500/40 transition-all duration-300">
-                C
+              <ClarityAILogo className="w-10 h-10 transform group-hover:scale-105 transition-transform duration-300" />
+              <div className="flex flex-col">
+                <h1 className="text-xl font-extrabold text-slate-900 tracking-tight leading-tight">Clarity<span className="text-blue-600">AI</span></h1>
+                <span className="text-[9px] uppercase font-bold tracking-widest text-slate-400">AI Powered Finance</span>
               </div>
-              <h1 className="text-2xl font-extrabold text-white tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">ClarityAI</h1>
             </Link>
             {authUser && (
-              <nav className="flex gap-6 items-center">
-                <Link to="/manual" className="text-sm bg-gradient-to-r from-teal-500/10 to-indigo-500/10 border border-teal-500/20 text-teal-400 px-4 py-2 rounded-xl hover:from-teal-500/20 hover:to-indigo-500/20 transition-all font-medium flex items-center gap-2">
-                  <span className="text-lg leading-none">+</span> Manual
+              <nav className="flex gap-4 items-center">
+                <Link to="/manual" className="text-xs bg-teal-50 border border-teal-200 text-teal-700 px-3.5 py-2 rounded-xl hover:bg-teal-100 transition-all font-semibold flex items-center gap-1.5 shadow-sm">
+                  <span className="text-base leading-none text-teal-600">+</span> Quick Entry
                 </Link>
-                <Link to="/" className="text-slate-400 hover:text-teal-400 font-medium transition-colors">Upload</Link>
-                <Link to="/dashboard" className="text-slate-400 hover:text-teal-400 font-medium transition-colors">Dashboard</Link>
-                <div className="h-6 w-px bg-slate-800 mx-2"></div>
-                <button onClick={handleLogout} className="text-slate-500 hover:text-red-400 font-medium transition-colors text-sm">Logout</button>
+                <Link to="/" className="text-sm text-slate-600 hover:text-teal-700 font-medium transition-colors">Upload</Link>
+                <Link to="/dashboard" className="text-sm text-slate-600 hover:text-teal-700 font-medium transition-colors">Dashboard</Link>
+                <div className="h-5 w-px bg-slate-200 mx-1"></div>
+                <button onClick={handleLogout} className="text-sm text-slate-500 hover:text-rose-600 font-medium transition-colors">Logout</button>
               </nav>
             )}
           </div>
         </header>
 
-        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative">
-          <div className="fixed top-0 left-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl -z-10 mix-blend-screen pointer-events-none"></div>
-          <div className="fixed bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -z-10 mix-blend-screen pointer-events-none"></div>
+        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+          <div className="fixed top-0 left-1/4 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+          <div className="fixed bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
           
           <Routes>
             <Route path="/login" element={!authUser ? <Login setAuthUser={setAuthUser} /> : <Navigate to="/" />} />
@@ -87,8 +89,8 @@ function App() {
           </Routes>
         </main>
         
-        <footer className="bg-slate-950 py-8 text-center text-slate-500 text-sm border-t border-slate-900/50">
-          &copy; 2026 ClarityAI. Powered by Hybrid Intelligence.
+        <footer className="bg-white py-6 text-center text-slate-400 text-xs border-t border-slate-200">
+          &copy; 2026 ClarityAI. Premium Financial Intelligence Platform.
         </footer>
       </div>
     </Router>

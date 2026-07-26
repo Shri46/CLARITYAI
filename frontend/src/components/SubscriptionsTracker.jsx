@@ -29,32 +29,32 @@ const SubscriptionsTracker = ({ transactions }) => {
   const total = subscriptions.reduce((sum, s) => sum + s.amount, 0);
 
   return (
-    <div className="bg-slate-900/60 backdrop-blur-xl p-6 rounded-3xl shadow-2xl border border-slate-800 h-full flex flex-col">
-      <div className="flex justify-between items-start mb-6">
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 h-full flex flex-col">
+      <div className="flex justify-between items-start mb-5">
         <div>
-          <h3 className="text-lg font-bold text-white">Subscriptions</h3>
-          <p className="text-sm text-slate-400 mt-1">Monthly recurring</p>
+          <h3 className="text-base font-bold text-slate-900">Recurring Subscriptions</h3>
+          <p className="text-xs text-slate-500 mt-0.5">Estimated auto-debits</p>
         </div>
-        <div className="bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-xl">
-          <span className="font-bold text-rose-400">₹{total.toLocaleString()}</span>
+        <div className="bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-xl">
+          <span className="font-bold text-xs text-rose-700">₹{total.toLocaleString()}/mo</span>
         </div>
       </div>
       
-      <div className="space-y-3 overflow-y-auto pr-2 custom-scrollbar flex-1 max-h-[220px]">
+      <div className="space-y-2.5 overflow-y-auto pr-1 flex-1 max-h-[220px]">
         {subscriptions.length === 0 ? (
-          <div className="text-center py-6 text-slate-500 text-sm">No active subscriptions detected.</div>
+          <div className="text-center py-8 text-slate-400 text-xs font-medium">No recurring subscriptions detected.</div>
         ) : subscriptions.map((s, idx) => (
-          <div key={idx} className="flex justify-between items-center p-3 bg-slate-950/50 rounded-xl border border-slate-800/60 hover:border-slate-700 transition-colors group">
+          <div key={idx} className="flex justify-between items-center p-2.5 bg-slate-50/70 rounded-xl border border-slate-200/70 hover:border-slate-300 transition-colors group">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-teal-400 font-bold uppercase group-hover:bg-slate-700 transition-colors shadow-inner">
+              <div className="w-8 h-8 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-700 text-xs font-bold uppercase shadow-2xs">
                 {s.name.substring(0,2)}
               </div>
               <div>
-                <span className="text-slate-200 font-medium capitalize block">{s.name}</span>
-                <span className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Auto-Debit</span>
+                <span className="text-slate-900 text-xs font-bold capitalize block">{s.name}</span>
+                <span className="text-[10px] text-slate-400 font-medium">Recurring</span>
               </div>
             </div>
-            <span className="text-slate-300 font-bold">₹{s.amount.toLocaleString()}</span>
+            <span className="text-slate-900 text-xs font-bold">₹{s.amount.toLocaleString()}</span>
           </div>
         ))}
       </div>

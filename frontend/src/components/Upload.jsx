@@ -59,10 +59,13 @@ const Upload = ({ onUploadSuccess }) => {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-8 bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl">
+    <div className="max-w-xl mx-auto mt-6 p-8 bg-white border border-slate-200/80 rounded-2xl shadow-xl shadow-slate-200/50">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-white tracking-tight">Upload Statement</h2>
-        <p className="text-slate-400 mt-2 text-sm">Upload your bank CSV file to automatically categorize expenses using AI.</p>
+        <div className="w-12 h-12 bg-teal-50 border border-teal-200 rounded-xl flex items-center justify-center text-teal-700 text-2xl mx-auto mb-3">
+          📊
+        </div>
+        <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Upload Bank Statement</h2>
+        <p className="text-slate-500 mt-1.5 text-xs">Upload your bank CSV file to automatically categorize transactions using Hybrid AI.</p>
       </div>
 
       <form onSubmit={(e) => { e.preventDefault(); handleUpload(); }} className="space-y-6">
@@ -72,28 +75,28 @@ const Upload = ({ onUploadSuccess }) => {
           onDragOver={handleDrag}
           onDrop={handleDrop}
           onClick={() => document.getElementById('fileInput').click()}
-          className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 ${
+          className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all duration-300 ${
             isDragActive 
-            ? 'border-teal-500 bg-teal-500/10 shadow-inner' 
-            : 'border-slate-700 hover:border-teal-500/50 hover:bg-slate-800/50 hover:shadow-lg'
+            ? 'border-teal-700 bg-teal-50/50 shadow-inner' 
+            : 'border-slate-300 hover:border-teal-700 hover:bg-slate-50/80'
           }`}
         >
           <input id="fileInput" type="file" className="hidden" accept=".csv" onChange={handleChange} />
-          <div className="mx-auto w-16 h-16 mb-4 rounded-full bg-slate-800 flex items-center justify-center text-teal-400">
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+          <div className="mx-auto w-14 h-14 mb-3 rounded-full bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-700">
+            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
           </div>
           {file ? (
-            <p className="text-teal-400 font-bold text-lg">{file.name}</p>
+            <p className="text-teal-700 font-bold text-base">{file.name}</p>
           ) : (
             <>
-              <p className="mt-2 text-slate-300 font-medium text-lg">Drag & drop your CSV here</p>
-              <p className="text-sm text-slate-500 mt-1">or click to browse files</p>
+              <p className="text-slate-800 font-semibold text-base">Drag & drop your bank CSV here</p>
+              <p className="text-xs text-slate-400 mt-1">or click to browse from device</p>
             </>
           )}
         </div>
 
         {errorMsg && (
-          <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm font-medium text-center">
+          <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-medium text-center">
             {errorMsg}
           </div>
         )}
@@ -101,39 +104,38 @@ const Upload = ({ onUploadSuccess }) => {
       {file && !processingState && (
         <button 
           onClick={handleUpload}
-          disabled={loading}
-          className="w-full bg-gradient-to-r from-teal-500 to-indigo-500 text-white font-bold py-3.5 rounded-xl hover:from-teal-400 hover:to-indigo-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-teal-500 transition-all shadow-lg hover:shadow-teal-500/25 disabled:opacity-50 flex justify-center items-center gap-2"
+          className="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 rounded-xl transition-all shadow-md shadow-blue-700/15 text-sm flex justify-center items-center gap-2"
         >
-          {loading ? 'Processing via AI...' : 'Analyze Statement'}
+          <span>Analyze Statement</span>
         </button>
       )}
       </form>
 
       {processingState && processingState !== 'done' && processingState !== 'error' && (
-        <div className="mt-12 w-full max-w-md">
-          <div className="flex justify-between mb-2 text-sm font-medium text-gray-700">
-            <span className={processingState === 'parsing' ? 'text-teal-600 delay-100 font-bold' : ''}>1. Parsing File</span>
-            <span className={processingState === 'rules' ? 'text-teal-600 delay-100 font-bold' : ''}>2. Running Rules (Fast)</span>
-            <span className={processingState === 'ai' ? 'text-purple-600 delay-100 font-bold flex items-center gap-1' : 'text-gray-400'}>
-              <DocumentChartBarIcon className="w-4 h-4" /> 3. Asking Gemini AI
+        <div className="mt-8 w-full">
+          <div className="flex justify-between mb-2 text-xs font-medium text-slate-600">
+            <span className={processingState === 'parsing' ? 'text-teal-700 font-bold' : ''}>1. Parsing File</span>
+            <span className={processingState === 'rules' ? 'text-teal-700 font-bold' : ''}>2. Running Rules</span>
+            <span className={processingState === 'ai' ? 'text-indigo-600 font-bold flex items-center gap-1' : 'text-slate-400'}>
+              3. Asking Gemini AI
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+          <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
             <div 
-              className={`h-2.5 rounded-full transition-all duration-700 ease-out ${processingState === 'ai' ? 'bg-purple-500' : 'bg-teal-500'}`} 
-              style={{ width: processingState === 'parsing' ? '20%' : processingState === 'rules' ? '60%' : '95%' }}
+              className={`h-2 rounded-full transition-all duration-700 ease-out ${processingState === 'ai' ? 'bg-indigo-600' : 'bg-teal-700'}`} 
+              style={{ width: processingState === 'parsing' ? '25%' : processingState === 'rules' ? '65%' : '95%' }}
             ></div>
           </div>
-          <p className="text-center text-sm text-gray-500 mt-4 animate-pulse">
-            Processing your transactions...
+          <p className="text-center text-xs text-slate-500 mt-3 animate-pulse">
+            Processing and categorizing your transactions...
           </p>
         </div>
       )}
 
       {processingState === 'error' && (
-        <div className="mt-8 bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl text-center">
-          <p className="font-semibold">Oops, something went wrong.</p>
-          <p className="text-sm mt-1">{errorMsg}</p>
+        <div className="mt-6 bg-rose-50 border border-rose-200 text-rose-700 px-5 py-3.5 rounded-xl text-center text-xs">
+          <p className="font-semibold">Oops, failed to analyze statement.</p>
+          <p className="mt-0.5">{errorMsg}</p>
         </div>
       )}
     </div>
