@@ -94,7 +94,7 @@ app.get('/api/user/status', protect, async (req, res) => {
       name: user.name,
       email: user.email,
       telegramLinked: !!user.telegramChatId,
-      botUsername: process.env.TELEGRAM_BOT_USERNAME || 'ClarityAIBot'
+      botUsername: process.env.TELEGRAM_BOT_USERNAME || 'kilo46_bot'
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
