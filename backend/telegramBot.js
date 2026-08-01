@@ -35,6 +35,9 @@ const initTelegramBot = () => {
            }
            
            if (targetUser) {
+             // Remove telegramChatId from any previous user holding this chatId
+             await User.updateMany({ telegramChatId: String(chatId) }, { $set: { telegramChatId: null } });
+             
              targetUser.telegramChatId = String(chatId);
              await targetUser.save();
              bot.sendMessage(chatId, `🎉 Welcome ${targetUser.name}! Your Telegram account has been linked to ${targetUser.email}.\n\nYou can now send me expenses directly here (e.g. "spent 500 on Swiggy"), and it will sync to your ClarityAI dashboard automatically!`);
