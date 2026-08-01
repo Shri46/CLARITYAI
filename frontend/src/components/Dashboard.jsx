@@ -59,25 +59,35 @@ const Dashboard = ({ data, refreshData }) => {
     return { totalSpend, netFlow, income, expenses, savingsRate, topCategory: topCategory ? { name: topCategory[0], value: topCategory[1] } : null, maxTx, monthlySpend, catTotals };
   }, [transactions]);
 
+  // Chart Colors
+  const CHART_COLORS = [
+    '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6',
+    '#EC4899', '#14B8A6', '#F97316', '#6366F1', '#06B6D4',
+    '#84CC16', '#D946EF'
+  ];
+
   // Chart Data
   const doughnutData = {
     labels: Object.keys(metrics.catTotals).filter(k => k !== 'Income' && k !== 'Transfer'),
     datasets: [{
       data: Object.entries(metrics.catTotals).filter(([k]) => k !== 'Income' && k !== 'Transfer').map(e => e[1]),
-      backgroundColor: [
-        '#14b8a6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981', '#6366f1'
-      ],
-      borderWidth: 0,
+      backgroundColor: CHART_COLORS,
+      borderWidth: 2,
+      borderColor: '#ffffff',
+      hoverBorderColor: '#ffffff',
+      hoverOffset: 6,
     }]
   };
 
+  const barLabels = Object.keys(metrics.monthlySpend);
   const barData = {
-    labels: Object.keys(metrics.monthlySpend),
+    labels: barLabels,
     datasets: [{
       label: 'Spending',
       data: Object.values(metrics.monthlySpend),
-      backgroundColor: '#14b8a6',
-      borderRadius: 4
+      backgroundColor: barLabels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]),
+      borderRadius: 6,
+      borderSkipped: false,
     }]
   };
 
@@ -136,15 +146,26 @@ const Dashboard = ({ data, refreshData }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col items-center justify-center">
-           <h3 className="text-base font-bold text-slate-900 mb-6 w-full text-left">Spending Breakdown</h3>
-           <div className="w-full max-w-[250px] aspect-square">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col">
+           <h3 className="text-base font-bold text-slate-900 mb-4 w-full text-left">Spending Breakdown</h3>
+           <div className="w-full max-w-[200px] aspect-square mx-auto">
            {doughnutData.labels.length > 0 ? (
-             <Doughnut data={doughnutData} options={{ cutout: '75%', plugins: { legend: { display: false } } }} />
+             <Doughnut data={doughnutData} options={{ cutout: '70%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ₹${ctx.parsed.toLocaleString()}` } } } }} />
            ) : (
-             <p className="text-slate-500 text-center mt-10">No spending data.</p>
+             <p className="text-slate-400 text-center mt-10 text-xs">No spending data.</p>
            )}
            </div>
+           {/* Custom Legend */}
+           {doughnutData.labels.length > 0 && (
+             <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 justify-center">
+               {doughnutData.labels.map((label, i) => (
+                 <div key={label} className="flex items-center gap-1.5">
+                   <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}></span>
+                   <span className="text-[10px] text-slate-600 font-medium">{label}</span>
+                 </div>
+               ))}
+             </div>
+           )}
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 lg:col-span-2 flex flex-col justify-center">
            <h3 className="text-base font-bold text-slate-900 mb-6">Monthly Spending Trend</h3>

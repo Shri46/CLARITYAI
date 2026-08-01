@@ -1,47 +1,100 @@
-import React, { useState } from 'react';
-import { getInsights } from '../api';
+import React, { useMemo } from 'react';
 
-const InsightsCard = () => {
-  const [insights, setInsights] = useState(null);
-  const [loading, setLoading] = useState(false);
+const InsightsCard = ({ transactions = [] }) => {
+  const insights = useMemo(() => {
+    if (!transactions || transactions.length === 0) return [];
 
-  const fetchInsights = async () => {
-    setLoading(true);
-    try {
-      const data = await getInsights();
-      setInsights(data.insights);
-    } catch (err) {
-      console.error("Failed to load insights", err);
-    } finally {
-      setLoading(false);
+    const bullets = [];
+    const catTotals = {};
+    let totalSpend = 0;
+    let income = 0;
+    let expenses = 0;
+    const monthlySpend = {};
+    const weekdaySpend = {};
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    transactions.forEach(t => {
+      const amt = Number(t.amount) || 0;
+      if (amt < 0) {
+        const absAmt = Math.abs(amt);
+        expenses += absAmt;
+        totalSpend += absAmt;
+        const cat = t.category || 'Other';
+        catTotals[cat] = (catTotals[cat] || 0) + absAmt;
+
+        const d = new Date(t.date || Date.now());
+        const monthYear = d.toLocaleString('default', { month: 'short', year: 'numeric' });
+        monthlySpend[monthYear] = (monthlySpend[monthYear] || 0) + absAmt;
+
+        const dayOfWeek = d.getDay();
+        weekdaySpend[dayOfWeek] = (weekdaySpend[dayOfWeek] || 0) + absAmt;
+      } else if (amt > 0) {
+        income += amt;
+      }
+    });
+
+    // 1. Top spending category
+    const sortedCats = Object.entries(catTotals)
+      .filter(([cat]) => cat !== 'Income' && cat !== 'Transfer')
+      .sort((a, b) => b[1] - a[1]);
+
+    if (sortedCats.length > 0) {
+      const [topCat, topAmt] = sortedCats[0];
+      const pct = totalSpend > 0 ? ((topAmt / totalSpend) * 100).toFixed(0) : 0;
+      bullets.push(`Your top spending category is ${topCat}, accounting for ${pct}% (₹${topAmt.toLocaleString()}) of total expenses.`);
     }
-  };
+
+    // 2. Second highest category comparison
+    if (sortedCats.length >= 2) {
+      const [secondCat, secondAmt] = sortedCats[1];
+      const diff = sortedCats[0][1] - secondAmt;
+      bullets.push(`${sortedCats[0][0]} spending is ₹${diff.toLocaleString()} more than ${secondCat} (₹${secondAmt.toLocaleString()}). Consider balancing these areas.`);
+    }
+
+    // 3. Savings insight
+    if (income > 0) {
+      const savingsRate = ((income - expenses) / income * 100).toFixed(1);
+      if (savingsRate >= 20) {
+        bullets.push(`Great job! Your savings rate is ${savingsRate}%. You're saving ₹${(income - expenses).toLocaleString()} this period.`);
+      } else if (savingsRate > 0) {
+        bullets.push(`Your savings rate is ${savingsRate}%. Try to aim for at least 20% — you need to save ₹${((income * 0.2) - (income - expenses)).toLocaleString()} more.`);
+      } else {
+        bullets.push(`⚠️ You're spending more than you earn. Expenses exceed income by ₹${(expenses - income).toLocaleString()}.`);
+      }
+    } else {
+      bullets.push(`Total expenses this period: ₹${totalSpend.toLocaleString()} across ${sortedCats.length} categories.`);
+    }
+
+    // 4. Spending day pattern
+    const dayEntries = Object.entries(weekdaySpend);
+    if (dayEntries.length > 0) {
+      const topDay = dayEntries.sort((a, b) => b[1] - a[1])[0];
+      bullets.push(`You tend to spend the most on ${dayNames[topDay[0]]}s (₹${topDay[1].toLocaleString()}). Plan ahead to avoid impulse purchases.`);
+    }
+
+    // 5. Average transaction size
+    const expenseTxs = transactions.filter(t => Number(t.amount) < 0);
+    if (expenseTxs.length > 0) {
+      const avgExpense = totalSpend / expenseTxs.length;
+      bullets.push(`Your average transaction size is ₹${avgExpense.toFixed(0)}. You have ${expenseTxs.length} expense transactions recorded.`);
+    }
+
+    return bullets.slice(0, 5);
+  }, [transactions]);
 
   return (
-    <div className="bg-gradient-to-br from-indigo-50/90 via-white to-teal-50/50 backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-indigo-100 h-full flex flex-col relative overflow-hidden group">
+    <div className="bg-gradient-to-br from-indigo-50/90 via-white to-teal-50/50 p-6 rounded-2xl shadow-sm border border-indigo-100 h-full flex flex-col relative overflow-hidden">
       {/* Decorative background glow */}
       <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
       
-      <div className="flex justify-between items-center mb-6 relative z-10">
-        <div className="flex items-center gap-2">
-           <span className="text-xl">✨</span>
-           <h3 className="text-base font-bold text-slate-900">AI Financial Insights</h3>
-        </div>
-        {!insights && !loading && (
-          <button onClick={fetchInsights} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl text-xs font-semibold transition-all shadow-sm">
-            Analyze
-          </button>
-        )}
+      <div className="flex items-center gap-2 mb-5 relative z-10">
+         <span className="text-xl">✨</span>
+         <h3 className="text-base font-bold text-slate-900">AI Financial Insights</h3>
       </div>
 
-      <div className="flex-1 relative z-10 flex flex-col justify-center">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <svg className="animate-spin h-7 w-7 text-indigo-600" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            <p className="text-indigo-900/80 text-xs font-semibold animate-pulse">Gemini is studying your habits...</p>
-          </div>
-        ) : insights ? (
-          <ul className="space-y-3.5">
+      <div className="flex-1 relative z-10">
+        {insights.length > 0 ? (
+          <ul className="space-y-3">
             {insights.map((bullet, idx) => (
               <li key={idx} className="flex items-start gap-3 text-slate-700 text-xs leading-relaxed bg-white/80 p-3 rounded-xl border border-indigo-100/60 shadow-2xs">
                 <span className="text-indigo-600 mt-0.5 flex-shrink-0">
@@ -52,7 +105,7 @@ const InsightsCard = () => {
             ))}
           </ul>
         ) : (
-          <p className="text-slate-500 text-xs text-center leading-relaxed">Click analyze to generate 3 smart plain-English insights about your spending behaviors powered by Google Gemini.</p>
+          <p className="text-slate-400 text-xs text-center leading-relaxed py-6">No transaction data available to generate insights.</p>
         )}
       </div>
     </div>
